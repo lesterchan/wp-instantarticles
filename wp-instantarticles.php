@@ -31,7 +31,7 @@ License: GPL2
  *
  * @since 1.0.0
  */
-define( 'WP_INSTANTARTICLES_NAME', 'wp-instantarticles' );
+define( 'WP_INSTANTARTICLES_NAME', 'wp_instantarticles' );
 
 /**
  * WP-InstantArticles version
@@ -68,7 +68,7 @@ class WPInstantArticles {
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ) );
 
 		// Load Translation
-		load_plugin_textdomain( 'wp-sweep' );
+		load_plugin_textdomain( 'wp-instantarticles' );
 
 		// Plugin Activation/Deactivation
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
@@ -182,46 +182,49 @@ class WPInstantArticles {
 					<![CDATA[
 					<!doctype html>
 					<html lang="en" prefix="op: http://media.facebook.com/op#">
-					<head>
-						<meta charset="utf-8">
-						<meta property="op:markup_version" content="v1.0">
-						<meta property="fb:article_style" content="<?php echo $theme_name; ?>">
-						<link rel="canonical" href="<?php the_permalink(); ?>">
-					</head>
-					<body>
-					<article>
-						<header>
-							<?php if( ! empty( $post_image ) ): ?>
-								<figure>
-									<img src="<?php echo $post_image; ?>" />
-								</figure>
-							<?php endif; ?>
-							<h1><?php the_title(); ?></h1>
-							<?php if( has_excerpt() ): ?>
-								<h3 class="op-kicker"><?php the_excerpt(); ?></h3>
-							<?php endif; ?>
-							<time class="op-published" dateTime="<?php echo $post_time_c; ?>"><?php the_time( 'g:i A \o\n M j, Y' ); ?></time>
-							<time class="op-modified" dateTime="<?php echo get_post_modified_time( 'c', true ); ?>"><?php the_modified_time( 'g:i A \o\n M j, Y' ); ?></time>
-							<address>
-								<?php if( ! empty( $author_facebook ) ): ?>
-									<a rel="facebook" href="<?php echo $author_facebook; ?>"><?php the_author(); ?></a>
-								<?php else: ?>
-									<a href="<?php echo get_author_posts_url( $author_id, $author_nicename ); ?>"><?php the_author(); ?></a>
-								<?php endif; ?>
-								<?php if( ! empty( $author_description ) ): ?>
-									<?php echo $author_description; ?>
-								<?php endif; ?>
-							</address>
-						</header>
-						<?php the_content(); ?>
-						<footer>
-							<aside>
-								<p>This post <a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a> appeared first on <?php echo $site_name; ?>.</p>
-							</aside>
-							<small>Copyright &copy; <?php echo date( 'Y' ); ?> <?php echo $site_name; ?>. All rights reserved.</small>
-						</footer>
-					</article>
-					</body>
+						<head>
+							<meta charset="utf-8">
+							<meta property="op:markup_version" content="v1.0">
+							<meta property="fb:article_style" content="<?php echo $theme_name; ?>">
+							<link rel="canonical" href="<?php the_permalink(); ?>">
+						</head>
+						<body>
+							<article>
+								<header>
+									<?php if( ! empty( $post_image ) ): ?>
+										<figure>
+											<img src="<?php echo $post_image; ?>" />
+										</figure>
+									<?php endif; ?>
+									<h1><?php the_title(); ?></h1>
+									<?php if( has_excerpt() ): ?>
+										<h3 class="op-kicker"><?php the_excerpt(); ?></h3>
+									<?php endif; ?>
+									<time class="op-published" dateTime="<?php echo $post_time_c; ?>"><?php the_time( 'g:i A \o\n M j, Y' ); ?></time>
+									<time class="op-modified" dateTime="<?php echo get_post_modified_time( 'c', true ); ?>"><?php the_modified_time( 'g:i A \o\n M j, Y' ); ?></time>
+									<address>
+										<?php if( ! empty( $author_facebook ) ): ?>
+											<a rel="facebook" href="<?php echo $author_facebook; ?>"><?php the_author(); ?></a>
+										<?php else: ?>
+											<a href="<?php echo get_author_posts_url( $author_id, $author_nicename ); ?>"><?php the_author(); ?></a>
+										<?php endif; ?>
+										<?php if( ! empty( $author_description ) ): ?>
+											<?php echo $author_description; ?>
+										<?php endif; ?>
+									</address>
+									<?php do_action( WP_INSTANTARTICLES_NAME . '_post_header' ); ?>
+								</header>
+								<?php the_content(); ?>
+								<?php do_action( WP_INSTANTARTICLES_NAME . '_post_content' ); ?>
+								<footer>
+									<?php do_action( WP_INSTANTARTICLES_NAME . '_post_footer' ); ?>
+									<aside>
+										<p>This post <a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a> appeared first on <?php echo $site_name; ?>.</p>
+									</aside>
+									<small>Copyright &copy; <?php echo date( 'Y' ); ?> <?php echo $site_name; ?>. All rights reserved.</small>
+								</footer>
+							</article>
+						</body>
 					</html>
 					]]>
 				</content:encoded>
