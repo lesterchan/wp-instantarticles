@@ -1,12 +1,12 @@
 # WP-InstantArticles
-Contributors: GamerZ
-Donate link: http://lesterchan.net/site/donation/
-Tags: facebook, instant articles, instant, article, quick, RSS, feed
-Requires at least: 4.4
-Tested up to: 4.4
-Stable tag: trunk
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Contributors: GamerZ  
+Donate link: http://lesterchan.net/site/donation/  
+Tags: facebook, instant articles, instant, article, quick, RSS, feed  
+Requires at least: 4.4  
+Tested up to: 4.4  
+Stable tag: trunk  
+License: GPLv2 or later  
+License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
 WP-InstantArticles generates a RSS feed of your WordPress posts as Instant Articles for Facebook to consume.
 
