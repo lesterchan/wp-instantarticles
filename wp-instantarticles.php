@@ -27,11 +27,18 @@ License: GPL2
 */
 
 /**
- * WP-InstantArticles name
+ * WP-InstantArticles plugin name
  *
  * @since 1.0.0
  */
-define( 'WP_INSTANTARTICLES_NAME', 'wp_instantarticles' );
+define( 'WP_INSTANTARTICLES_PLUGIN_NAME', 'wp-instantarticles' );
+
+/**
+ * WP-InstantArticles nice name
+ *
+ * @since 1.0.0
+ */
+define( 'WP_INSTANTARTICLES_NICE_NAME', 'wp_instantarticles' );
 
 /**
  * WP-InstantArticles version
@@ -68,7 +75,7 @@ class WPInstantArticles {
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ) );
 
 		// Load Translation
-		load_plugin_textdomain( 'wp-instantarticles' );
+		load_plugin_textdomain( WP_INSTANTARTICLES_PLUGIN_NAME );
 
 		// Plugin Activation/Deactivation
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
@@ -101,6 +108,9 @@ class WPInstantArticles {
 	public function add_hooks() {
 		// Actions
 		add_action( 'init', array( $this, 'init' ) );
+
+		// Filters
+		add_filter( WP_INSTANTARTICLES_NICE_NAME . '_post_content', array( $this, 'format_post_content' ), 99 );
 	}
 
 	/**
@@ -112,7 +122,7 @@ class WPInstantArticles {
 	 * @return void
 	 */
 	public function init() {
-		$instant_articles_ns = apply_filters( WP_INSTANTARTICLES_NAME . '_namespace', 'instant-articles' );
+		$instant_articles_ns = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_namespace', 'instant-articles' );
 		add_feed( $instant_articles_ns, array( $this, 'render_instant_articles' ) );
 	}
 
@@ -135,7 +145,7 @@ class WPInstantArticles {
 				<description><?php bloginfo_rss("description") ?></description>
 				<language><?php bloginfo_rss( 'language' ); ?></language>
 				<lastBuildDate><?php echo mysql2date( 'c', get_lastpostmodified( 'GMT' ), false ); ?></lastBuildDate>
-				<?php do_action( WP_INSTANTARTICLES_NAME . '_rss2_head' ); ?>
+				<?php do_action( WP_INSTANTARTICLES_NICE_NAME . '_rss2_head' ); ?>
 				<?php $this->render_wp_loop(); ?>
 			</channel>
 		</rss>
@@ -152,98 +162,118 @@ class WPInstantArticles {
 	 */
 	public function render_wp_loop() {
 		$site_name = get_bloginfo( 'name' );
-		$theme_name = apply_filters( WP_INSTANTARTICLES_NAME . '_article_style', wp_get_theme() );
 
-		while( have_posts() ):
-			the_post();
-			$post_time_c    = get_post_time( 'c', true );
-			$post_image     = wp_get_attachment_url( get_post_thumbnail_id() );
-			if( empty( $post_image ) ) {
-				$post_image = $this->get_first_image_url( get_the_content() );
-			}
-			$post_image = apply_filters( WP_INSTANTARTICLES_NAME . '_post_image', $post_image );
+		$theme_name = wp_get_theme();
+		$theme_name = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_article_style', $theme_name );
 
-			$rss_excerpt        = apply_filters( 'the_excerpt_rss', get_the_excerpt() );
-			$rss_description    = empty( $rss_excerpt ) ? wp_trim_words( get_the_content_feed() ) : $rss_excerpt;
+		$credits    = sprintf( __( 'This post <a href="%s">%s</a> appeared first on %s.', WP_INSTANTARTICLES_PLUGIN_NAME ), get_permalink(), get_the_title(), $site_name );
+		$credits    = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_credits', $credits );
 
-			$author_id          = get_the_author_meta( 'ID' );
-			$author_nicename    = get_the_author( 'user_nicename' );
-			$author_facebook    = get_the_author_meta( 'facebook' );
-			$author_description = get_the_author_meta( 'user_description' );
+		$copyright  = sprintf( __( 'Copyright &copy; %d %s. All rights reserved.', WP_INSTANTARTICLES_PLUGIN_NAME ), date( 'Y' ), $site_name );
+		$copyright  = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_copyright', $copyright );
+
+		if( have_posts() ):
+			while( have_posts() ):
+				the_post();
+				$post_time_c    = get_post_time( 'c', true );
+				$post_image     = wp_get_attachment_url( get_post_thumbnail_id() );
+				$post_image_alt = '';
+				if( empty( $post_image ) ) {
+					$post_image = $this->get_post_first_image_url( get_the_content() );
+				} else {
+					$post_image_alt = $this->get_post_attachment_alt( get_post_thumbnail_id() );
+				}
+				$post_image     = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_image', $post_image );
+				$post_image_alt = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_alt', $post_image_alt );
+
+				$rss_excerpt        = apply_filters( 'the_excerpt_rss', get_the_excerpt() );
+				$rss_description    = empty( $rss_excerpt ) ? wp_trim_words( get_the_content_feed() ) : $rss_excerpt;
+
+				$author_id          = get_the_author_meta( 'ID' );
+				$author_nicename    = get_the_author( 'user_nicename' );
+				$author_facebook    = get_the_author_meta( 'facebook' );
+				$author_description = get_the_author_meta( 'user_description' );
 ?>
-			<item>
-				<title><?php the_title_rss(); ?></title>
-				<link><?php the_permalink_rss(); ?></link>
-				<pubDate><?php echo $post_time_c; ?></pubDate>
-				<author><?php the_author(); ?></author>
-				<guid><?php echo md5( get_the_guid() ); ?></guid>
-				<description><?php echo $rss_description; ?></description>
-				<content:encoded>
-					<![CDATA[
-					<!doctype html>
-					<html lang="en" prefix="op: http://media.facebook.com/op#">
-						<head>
-							<meta charset="utf-8">
-							<meta property="op:markup_version" content="v1.0">
-							<meta property="fb:article_style" content="<?php echo $theme_name; ?>">
-							<link rel="canonical" href="<?php the_permalink(); ?>">
-						</head>
-						<body>
-							<article>
-								<header>
-									<?php if( ! empty( $post_image ) ): ?>
-										<figure>
-											<img src="<?php echo $post_image; ?>" />
-										</figure>
-									<?php endif; ?>
-									<h1><?php the_title(); ?></h1>
-									<?php if( has_excerpt() ): ?>
-										<h3 class="op-kicker"><?php the_excerpt(); ?></h3>
-									<?php endif; ?>
-									<time class="op-published" dateTime="<?php echo $post_time_c; ?>"><?php the_time( 'g:i A \o\n M j, Y' ); ?></time>
-									<time class="op-modified" dateTime="<?php echo get_post_modified_time( 'c', true ); ?>"><?php the_modified_time( 'g:i A \o\n M j, Y' ); ?></time>
-									<address>
-										<?php if( ! empty( $author_facebook ) ): ?>
-											<a rel="facebook" href="<?php echo $author_facebook; ?>"><?php the_author(); ?></a>
-										<?php else: ?>
-											<a href="<?php echo get_author_posts_url( $author_id, $author_nicename ); ?>"><?php the_author(); ?></a>
+				<item>
+					<title><?php the_title_rss(); ?></title>
+					<link><?php the_permalink_rss(); ?></link>
+					<pubDate><?php echo $post_time_c; ?></pubDate>
+					<author><?php the_author(); ?></author>
+					<guid><?php echo md5( get_the_guid() ); ?></guid>
+					<description><?php echo $rss_description; ?></description>
+					<content:encoded>
+						<![CDATA[
+						<!doctype html>
+						<html lang="en" prefix="op: http://media.facebook.com/op#">
+							<head>
+								<meta charset="utf-8">
+								<meta property="op:markup_version" content="v1.0">
+								<meta property="fb:article_style" content="<?php echo $theme_name; ?>">
+								<link rel="canonical" href="<?php the_permalink(); ?>">
+							</head>
+							<body>
+								<article>
+									<header>
+										<?php if( ! empty( $post_image ) ): ?>
+											<figure>
+												<img src="<?php echo $post_image; ?>" />
+												<?php if( ! empty( $post_image_alt ) ): ?>
+													<figcaption><?php echo $post_image_alt; ?></figcaption>
+												<?php endif; ?>
+											</figure>
 										<?php endif; ?>
-										<?php if( ! empty( $author_description ) ): ?>
-											<?php echo $author_description; ?>
+										<h1><?php the_title(); ?></h1>
+										<?php if( has_excerpt() ): ?>
+											<h2><?php the_excerpt(); ?></h2>
 										<?php endif; ?>
-									</address>
-									<?php do_action( WP_INSTANTARTICLES_NAME . '_post_header' ); ?>
-								</header>
-								<?php the_content(); ?>
-								<?php do_action( WP_INSTANTARTICLES_NAME . '_post_content' ); ?>
-								<footer>
-									<?php do_action( WP_INSTANTARTICLES_NAME . '_post_footer' ); ?>
-									<aside>
-										<p>This post <a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a> appeared first on <?php echo $site_name; ?>.</p>
-									</aside>
-									<small>Copyright &copy; <?php echo date( 'Y' ); ?> <?php echo $site_name; ?>. All rights reserved.</small>
-								</footer>
-							</article>
-						</body>
-					</html>
-					]]>
-				</content:encoded>
-				<?php do_action( WP_INSTANTARTICLES_NAME . '_rss2_item' ); ?>
-			</item>
+										<h3 class="op-kicker"><?php echo $this->get_post_categories( get_the_category() ); ?></h3>
+										<time class="op-published" dateTime="<?php echo $post_time_c; ?>"><?php the_time( 'g:i A \o\n M j, Y' ); ?></time>
+										<time class="op-modified" dateTime="<?php echo get_post_modified_time( 'c', true ); ?>"><?php the_modified_time( 'g:i A \o\n M j, Y' ); ?></time>
+										<address>
+											<?php if( ! empty( $author_facebook ) ): ?>
+												<a rel="facebook" href="<?php echo $author_facebook; ?>"><?php the_author(); ?></a>
+											<?php else: ?>
+												<a href="<?php echo get_author_posts_url( $author_id, $author_nicename ); ?>"><?php the_author(); ?></a>
+											<?php endif; ?>
+											<?php if( ! empty( $author_description ) ): ?>
+												<?php echo $author_description; ?>
+											<?php endif; ?>
+										</address>
+										<?php do_action( WP_INSTANTARTICLES_NICE_NAME . '_post_header' ); ?>
+									</header>
+
+									<?php echo apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_content', apply_filters( 'the_content', get_the_content( '' ) ) ); ?>
+
+									<?php do_action( WP_INSTANTARTICLES_NICE_NAME . '_post_content' ); ?>
+									<footer>
+										<?php do_action( WP_INSTANTARTICLES_NICE_NAME . '_post_footer' ); ?>
+										<aside>
+											<p><?php echo $credits; ?></p>
+										</aside>
+										<small><?php echo $copyright; ?></small>
+									</footer>
+								</article>
+							</body>
+						</html>
+						]]>
+					</content:encoded>
+					<?php do_action( WP_INSTANTARTICLES_NICE_NAME . '_rss2_item' ); ?>
+				</item>
 <?php
-		endwhile;
+			endwhile;
+		endif;
 	}
 
 	/**
-	 * Get the first image URL from the content
+	 * Get the first image URL from a given content
 	 *
 	 * @since 1.0.0
 	 *
 	 * @access private
-	 * @param $content
+	 * @param string $content
 	 * @return string
 	 */
-	private function get_first_image_url( $content ) {
+	private function get_post_first_image_url( $content ) {
 		$url = '';
 
 		preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches, PREG_SET_ORDER );
@@ -252,6 +282,71 @@ class WPInstantArticles {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Get the post's attachment alt
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access private
+	 * @param int $attachment_id
+	 * @return string
+	 */
+	private function get_post_attachment_alt( $attachment_id ) {
+		$alt = trim( strip_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
+		if( empty( $alt ) ) {
+			$attachment = get_post( $attachment_id );
+			$alt = trim( strip_tags( $attachment->post_excerpt ) );
+			if( empty( $alt ) ) {
+				$alt = trim(strip_tags( $attachment->post_title ) );
+			}
+		}
+
+		return $alt;
+	}
+
+	/**
+	 * Get the post categories in a list
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access private
+	 * @param array $categories
+	 * @param string $seperator
+	 * @return string
+	 */
+	private function get_post_categories( $categories, $seperator = ', ' ) {
+		$cat = array();
+		if( count( $categories ) > 0 ) {
+			foreach( $categories as $category ) {
+				$cat[] = $category->name;
+			}
+		}
+
+		return trim( implode( $cat, $seperator ) );
+	}
+
+	/**
+	 * Format the post content.
+	 *
+	 * 1. Props to @bueltge for Replacement of <image> to <figure>.
+	 * Source: http://wordpress.stackexchange.com/questions/174582/always-use-figure-for-post-images
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @param string $content
+	 * @return string
+	 */
+	public function format_post_content( $content ) {
+		$content = preg_replace(
+			'/<p>\\s*?(<a.*?><img.*?><\\/a>|<img.*?>)?\\s*<\\/p>/s',
+			'<figure>$1</figure>',
+			$content
+		);
+
+		return $content;
 	}
 
 	/**
