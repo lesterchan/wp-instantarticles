@@ -45,5 +45,37 @@ N/A
 ### 404 when accessing `http://yoursite.com/instant-articles`
 * You might need to re-generate permalink (WP-Admin -> Settings -> Permalinks -> Save Changes)
 
+### What are the filters available?
+* wp_instantarticles_namespace
+ * Default: instant-articles
+* wp_instantarticles_template_rss2
+ * Default: instantarticles-rss2.php
+* wp_instantarticles_template_rss2_items
+ * Default: instantarticles-rss2-items.php
+* wp_instantarticles_article_style
+ * Default: wp_get_theme() which returns your theme folder name.
+* wp_instantarticles_post_credits
+ * Default: This post POST_TITLE appeared first on SITE_NAME.
+* wp_instantarticles_post_copyright
+ * Default: Copyright &copy; YEAR SITE_NAME. All rights reserved.
+* wp_instantarticles_post_image
+ * Default: Featured image URL or first image URL in post.
+* wp_instantarticles_post_image_alt
+ * Default: Featured image alt, excerpt or  title.
+* wp_instantarticles_post_content
+ * Default: Post content.
+
+### What are the hooks available?
+* wp_instantarticles_rss2_head
+ * Fires: Within `<channel></channel>`, before first `<item>`
+* wp_instantarticles_rss2_item
+ * Firews: After `</content:encoded>`, before `</item>`
+* wp_instantarticles_post_header
+ * Fires: Before `</header>`
+* wp_instantarticles_post_content
+ * Fires: After post content, before `</footer>`
+* wp_instantarticles_post_footer
+ * Fires: Immediately after `<footer>`
+
 ## Upgrade Notice
 N/A

@@ -155,7 +155,7 @@ class WPInstantArticles {
 	 * @return void
 	 */
 	public function wp_loop() {
-		$template_rss2_items_name = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_template_rss2_item', 'instantarticles-rss2-items.php' );
+		$template_rss2_items_name = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_template_rss2_items', 'instantarticles-rss2-items.php' );
 		if ( $template = locate_template( $template_rss2_items_name ) ) {
 			load_template( $template );
 		} else {
@@ -296,7 +296,7 @@ class WPInstantArticles {
 			get_bloginfo( 'name' )
 		);
 
-		return  apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_copyright', $copyright );
+		return apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_copyright', $copyright );
 	}
 
 	/**

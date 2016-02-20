@@ -11,13 +11,13 @@
 				$post_image_alt = WPInstantArticles::get_instance()->get_post_attachment_alt( get_post_thumbnail_id() );
 			}
 			$post_image     = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_image', $post_image );
-			$post_image_alt = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_alt', $post_image_alt );
+			$post_image_alt = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_post_image_alt', $post_image_alt );
 
 			$rss_excerpt        = apply_filters( 'the_excerpt_rss', get_the_excerpt() );
 			$rss_description    = empty( $rss_excerpt ) ? wp_trim_words( get_the_content_feed() ) : $rss_excerpt;
 
 			$author_id          = get_the_author_meta( 'ID' );
-			$author_nicename    = get_the_author( 'user_nicename' );
+			$author_nicename    = get_the_author_meta( 'user_nicename' );
 			$author_facebook    = get_the_author_meta( 'facebook' );
 			$author_description = get_the_author_meta( 'user_description' );
 ?>
