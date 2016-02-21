@@ -1,6 +1,6 @@
 # WP-InstantArticles
 Contributors: GamerZ  
-Donate link: http://lesterchan.net/site/donation/  
+Donate link: https://lesterchan.net/site/donation/  
 Tags: facebook, instant articles, instant, article, quick, RSS, feed  
 Requires at least: 4.4  
 Tested up to: 4.4  
@@ -36,13 +36,13 @@ I spent most of my free time creating, updating, maintaining and supporting thes
 ## Installation
 1. Upload `wp-instantarticles` folder to the `/wp-content/plugins/` directory
 2. Activate the `WP-InstantArticles` plugin through the 'Plugins' menu in WordPress
-3. There are no options for the plugin. You can access the Instant Articles RSS feed at `http://yoursite.com/instant-articles`
+3. There are no options for the plugin. You can access the Instant Articles RSS feed at `http://yoursite.com/instant-articles`.
 
 ## Screenshots
 N/A
 
 ## Frequently Asked Questions
-### 404 when accessing `http://yoursite.com/instant-articles`
+### 404 when accessing `http://yoursite.com/instant-articles`.
 * You might need to re-generate permalink (WP-Admin -> Settings -> Permalinks -> Save Changes)
 
 ### What are the filters available?
@@ -67,15 +67,15 @@ N/A
 
 ### What are the hooks available?
 * wp_instantarticles_rss2_head
- * Fires: Within `<channel></channel>`, before first `<item>`
+ * Fires: Within `<channel></channel>`, before first `<item>`.
 * wp_instantarticles_rss2_item
- * Firews: After `</content:encoded>`, before `</item>`
+ * Fires: After `</content:encoded>`, before `</item>`.
 * wp_instantarticles_post_header
- * Fires: Before `</header>`
+ * Fires: Before `</header>`.
 * wp_instantarticles_post_content
- * Fires: After post content, before `</footer>`
+ * Fires: After post content, before `</footer>`.
 * wp_instantarticles_post_footer
- * Fires: Immediately after `<footer>`
+ * Fires: Immediately after `<footer>`.
 
 ## Upgrade Notice
 N/A
