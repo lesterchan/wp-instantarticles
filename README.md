@@ -45,6 +45,9 @@ N/A
 ### 404 when accessing `http://yoursite.com/instant-articles`.
 * You might need to re-generate permalink (WP-Admin -> Settings -> Permalinks -> Save Changes)
 
+### Support for Custom Post Types?
+* You can access your Custom Post Type Instant Articles feed via `http://yoursite.com/instant-articles/?post_type=CPT`.
+
 ### What are the filters available?
 * wp_instantarticles_namespace
  * Default: instant-articles

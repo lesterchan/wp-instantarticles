@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: WP-InstantArticles
-Plugin URI: http://lesterchan.net/portfolio/programming/php/
+Plugin URI: https://lesterchan.net/portfolio/programming/php/
 Description: WP-InstantArticles generates a RSS feed of your WordPress posts as Instant Articles for Facebook to consume. You can access your Instant Articles RSS feed at <a href="http://yoursite.com/instant-articles">http://yoursite.com/instant-articles</a>. Check out Facebook's developer guide on <a href="https://developers.facebook.com/docs/instant-articles/publishing">Publishing Instant Articles</a> for more information.
 Version: 1.0.0
 Author: Lester 'GaMerZ' Chan
-Author URI: http://lesterchan.net
+Author URI: https://lesterchan.net
 Text Domain: wp-instantarticles
 License: GPL2
 */
