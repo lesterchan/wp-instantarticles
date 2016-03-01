@@ -54,6 +54,16 @@ define( 'WP_INSTANTARTICLES_VERSION', '1.0.0' );
  */
 class WPInstantArticles {
 	/**
+	 * Namespace. Defaults to instant-articles.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access private
+	 * @var $namespace
+	 */
+	private $namespace = 'instant-articles';
+
+	/**
 	 * Static instance
 	 *
 	 * @since 1.0.0
@@ -108,6 +118,7 @@ class WPInstantArticles {
 	public function add_hooks() {
 		// Actions
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 
 		// Filters
 		add_filter( WP_INSTANTARTICLES_NICE_NAME . '_post_content', array( $this, 'format_post_content' ), 99 );
@@ -122,8 +133,23 @@ class WPInstantArticles {
 	 * @return void
 	 */
 	public function init() {
-		$instant_articles_ns = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_namespace', 'instant-articles' );
-		add_feed( $instant_articles_ns, array( $this, 'render_instant_articles' ) );
+		$this->namespace = apply_filters( WP_INSTANTARTICLES_NICE_NAME . '_namespace', 'instant-articles' );
+		add_feed( $this->namespace, array( $this, 'render_instant_articles' ) );
+	}
+
+	/**
+	 * After setup theme
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function after_setup_theme() {
+		if( ! $this->in_instant_articles_feed() ) {
+			return;
+		}
+		add_theme_support( 'html5', [ 'caption' ] );
 	}
 
 	/**
@@ -161,6 +187,24 @@ class WPInstantArticles {
 		} else {
 			load_template( dirname( __FILE__ ) . '/templates/instantarticles-rss2-items.php' );
 		}
+	}
+
+	/**
+	 * Is it in Instant Articles feed?
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function in_instant_articles_feed() {
+		$is_feed = is_feed( $this->namespace );
+		if( ! $is_feed ) {
+			// We check the URL because of early init is_feed() might not be available
+			$is_feed = ( strpos( $_SERVER['REQUEST_URI'], '/' . $this->namespace ) !== false );
+		}
+
+		return $is_feed;
 	}
 
 	/**
@@ -241,7 +285,7 @@ class WPInstantArticles {
 	/**
 	 * Format the post content.
 	 *
-	 * 1. Props to @bueltge for Replacement of <image> to <figure>.
+	 * 1. Props to @bueltge for Replacement of <img> to <figure>.
 	 * Source: http://wordpress.stackexchange.com/questions/174582/always-use-figure-for-post-images
 	 *
 	 * @since 1.0.0
