@@ -3,7 +3,7 @@ Contributors: GamerZ
 Donate link: https://lesterchan.net/site/donation/  
 Tags: facebook, instant articles, instant, article, quick, RSS, feed  
 Requires at least: 4.4  
-Tested up to: 4.7  
+Tested up to: 5.0
 Stable tag: trunk  
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
